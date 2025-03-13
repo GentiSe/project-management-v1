@@ -1,5 +1,8 @@
-﻿namespace project_management_v1.Domain.Entities
+﻿namespace project_management_v1.Application.Domain.Entities
 {
+    /// <summary>
+    /// Utilizes a self-referencing table to store projects and their children (unlimited layers of hierarchy). 
+    /// </summary>
     public class Project
     {
         public Guid Id { get; set; }

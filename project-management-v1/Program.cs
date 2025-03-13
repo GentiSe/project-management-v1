@@ -1,17 +1,15 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using project_management_v1.Infrastructure.Data;
+using project_management_v1.Infrastructure.ServiceCollectionExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
 
-// Add services to the container.
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+builder
+    .AddDbContext()
+    .AddIdentityService()
+    .AddIoC();
 
-// For Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -20,8 +18,18 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+SeedDatabase();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+void SeedDatabase() //can be placed at the very bottom under app.Run()
+{
+    using var scope = app.Services.CreateScope();
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    dbInitializer.Initialize().GetAwaiter().GetResult();
+}

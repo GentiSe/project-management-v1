@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using project_management_v1.Domain.Entities;
+using project_management_v1.Application.Domain.Entities;
 
 namespace project_management_v1.Infrastructure.Data.EntityConfigurations
 {

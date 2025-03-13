@@ -1,6 +1,6 @@
-﻿using project_management_v1.Domain.Enums;
+﻿using project_management_v1.Application.Domain.Enums;
 
-namespace project_management_v1.Domain.Entities
+namespace project_management_v1.Application.Domain.Entities
 {
     public class ProjectItem
     {

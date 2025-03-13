@@ -1,4 +1,4 @@
-﻿namespace project_management_v1.Domain.Enums
+﻿namespace project_management_v1.Application.Domain.Enums
 {
     public enum ProjectItemPriority
     {
