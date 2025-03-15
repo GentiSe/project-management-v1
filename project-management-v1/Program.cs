@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder
     .AddDbContext()
     .AddIdentityService()
-    .AddIoC();
+    .AddIoC()
+    .UseAuth();
 
 
 
@@ -20,6 +21,7 @@ app.UseHttpsRedirection();
 
 SeedDatabase();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

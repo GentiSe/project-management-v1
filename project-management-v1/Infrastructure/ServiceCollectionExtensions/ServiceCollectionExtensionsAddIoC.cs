@@ -1,5 +1,6 @@
 ﻿using project_management_v1.Application.Repository;
 using project_management_v1.Infrastructure.Data;
+using project_management_v1.Infrastructure.Services;
 
 namespace project_management_v1.Infrastructure.ServiceCollectionExtensions
 {
@@ -15,6 +16,9 @@ namespace project_management_v1.Infrastructure.ServiceCollectionExtensions
         {
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IProjectManagementRepository, ProjectManagementRepository>();
+            services.AddScoped<ISalesDataService, SalesDataService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IJsonSerializerService, JsonSerializerService>();
             return services;
         }
     }

@@ -1,5 +1,8 @@
-﻿using project_management_v1.Application.Domain.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using project_management_v1.Application.Domain.Constants;
+using project_management_v1.Application.Domain.Entities;
 using project_management_v1.Application.Domain.Enums;
+using System.Security.Claims;
 
 namespace project_management_v1.Infrastructure.Data
 {
@@ -7,7 +10,8 @@ namespace project_management_v1.Infrastructure.Data
     {
         Task Initialize();
     }
-    public class DbInitializer(ApplicationDbContext context) 
+    public class DbInitializer(ApplicationDbContext context, RoleManager<IdentityRole> roleManager,
+        UserManager<IdentityUser> userManager) 
         : IDbInitializer
     {
         // Added some dummy data for testing purposes.
@@ -60,9 +64,36 @@ namespace project_management_v1.Infrastructure.Data
 
                 var projectItems = GetProjectItems(childProject1.Id);
                 await context.ProjectItems.AddRangeAsync(projectItems);
-
                 await context.SaveChangesAsync();
             }
+            var t = await roleManager.FindByNameAsync(UserRoles.Admin);
+            if (await roleManager.FindByNameAsync(UserRoles.Admin) == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.Basic));
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.Analyst));
+
+            }
+            var adminUser = new IdentityUser
+            {
+                UserName = "gentselimi7@gmail.com",
+                Email = "gentselimi7@gmail.com",
+                EmailConfirmed = true,
+                PhoneNumber = "044352799",
+            };
+
+            var res = await userManager.CreateAsync(adminUser, "Admin123.");
+
+            if (res.Succeeded)
+            {
+                await userManager.AddToRoleAsync(adminUser, UserRoles.Admin);
+
+                await userManager.AddClaimsAsync(adminUser, new Claim[]
+                {
+                new(ClaimTypes.Role, UserRoles.Admin)
+                });
+            }
+
         }
 
         private List<ProjectItem> GetProjectItems(Guid childProjectId1)
