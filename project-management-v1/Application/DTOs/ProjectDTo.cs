@@ -6,7 +6,7 @@ namespace project_management_v1.Application.DTOs
     {
         public Guid Id { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
+        //[JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         // Always ignore this property in JSON serialization since it is not needed for this case.
         // Used only for querying purposes.
         public Guid? ParentId { get; set; }

@@ -6,12 +6,14 @@ using System.Text;
 
 namespace project_management_v1.Infrastructure.Services
 {
-    public class AuthenticationService(UserManager<IdentityUser> userManager) 
+    public class AuthenticationService(UserManager<IdentityUser> userManager, IConfiguration configuration) 
         : IAuthenticationService
     {
         public async Task<string> GenerateJwtToken(IdentityUser user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("5ee239b2-82cd-45cb-974e-65d3b51ee7db"));
+            var jwtSecret = configuration["ApplicationSettings:JWT_Secret"];
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var roles = await userManager.GetRolesAsync(user);

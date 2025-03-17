@@ -15,5 +15,6 @@
         public virtual Project? Parent { get; set; }
         public virtual ICollection<Project> Children { get; set; } = [];
         public virtual ICollection<ProjectItem> Items { get; set; } = [];
+        public virtual ICollection<ProjectRoleAccess> ProjectRoleAccesses { get; set; } = [];
     }
 }

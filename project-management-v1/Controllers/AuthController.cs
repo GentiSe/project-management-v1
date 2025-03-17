@@ -15,7 +15,6 @@ namespace project_management_v1.Controllers
     {
 
         [HttpPost]
-        
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequestModel request)
         {
             if (request is null)

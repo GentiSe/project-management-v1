@@ -1,21 +1,21 @@
+using project_management_v1.Infrastructure;
 using project_management_v1.Infrastructure.Data;
 using project_management_v1.Infrastructure.ServiceCollectionExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
+
 builder
     .AddDbContext()
     .AddIdentityService()
     .AddIoC()
-    .UseAuth();
-
-
+    .UseAuth()
+    .UseAuthorization();
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
 

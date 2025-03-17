@@ -4,7 +4,7 @@ using project_management_v1.Infrastructure.Services;
 
 namespace project_management_v1.Infrastructure.ServiceCollectionExtensions
 {
-    public static partial class ServiceCollectionExtensionsAddIoC
+    public static partial class ServiceCollectionExtensions
     {
         public static WebApplicationBuilder AddIoC(this WebApplicationBuilder builder)
         {

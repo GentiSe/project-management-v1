@@ -17,6 +17,7 @@ namespace project_management_v1.Infrastructure.Data.EntityConfigurations
                    .IsRequired();
 
             builder.Property(p => p.Type)
+                    .HasConversion<string>()
                    .IsRequired();
 
             builder.Property(p => p.Title).IsRequired(false)

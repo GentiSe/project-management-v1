@@ -220,7 +220,7 @@ namespace project_management_v1.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("project_management_v1.Domain.Entities.Project", b =>
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -251,7 +251,7 @@ namespace project_management_v1.Migrations
                     b.ToTable("Projects", (string)null);
                 });
 
-            modelBuilder.Entity("project_management_v1.Domain.Entities.ProjectItem", b =>
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.ProjectItem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -292,8 +292,9 @@ namespace project_management_v1.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Url")
                         .HasMaxLength(500)
@@ -306,6 +307,37 @@ namespace project_management_v1.Migrations
                     b.HasIndex("Type");
 
                     b.ToTable("ProjectItems", (string)null);
+                });
+
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.ProjectRoleAccess", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccesType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("ProjectId", "RoleId");
+
+                    b.ToTable("ProjectRoleAccesses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -359,9 +391,9 @@ namespace project_management_v1.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("project_management_v1.Domain.Entities.Project", b =>
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.Project", b =>
                 {
-                    b.HasOne("project_management_v1.Domain.Entities.Project", "Parent")
+                    b.HasOne("project_management_v1.Application.Domain.Entities.Project", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -369,9 +401,9 @@ namespace project_management_v1.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("project_management_v1.Domain.Entities.ProjectItem", b =>
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.ProjectItem", b =>
                 {
-                    b.HasOne("project_management_v1.Domain.Entities.Project", "Project")
+                    b.HasOne("project_management_v1.Application.Domain.Entities.Project", "Project")
                         .WithMany("Items")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -380,11 +412,32 @@ namespace project_management_v1.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("project_management_v1.Domain.Entities.Project", b =>
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.ProjectRoleAccess", b =>
+                {
+                    b.HasOne("project_management_v1.Application.Domain.Entities.Project", "Project")
+                        .WithMany("ProjectRoleAccesses")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("project_management_v1.Application.Domain.Entities.Project", b =>
                 {
                     b.Navigation("Children");
 
                     b.Navigation("Items");
+
+                    b.Navigation("ProjectRoleAccesses");
                 });
 #pragma warning restore 612, 618
         }

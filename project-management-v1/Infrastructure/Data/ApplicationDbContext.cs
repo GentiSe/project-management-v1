@@ -9,6 +9,7 @@ namespace project_management_v1.Infrastructure.Data
     {
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectItem> ProjectItems { get; set; }
+        public DbSet<ProjectRoleAccess> ProjectRoleAccesses { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> opt) : base(opt)
         {
             
