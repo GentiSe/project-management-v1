@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using project_management_v1.Infrastructure.Services;
+using project_management_v1.Services;
 
 namespace project_management_v1.Controllers
 {
@@ -9,34 +9,44 @@ namespace project_management_v1.Controllers
     public class SalesAggregationController(ISalesDataService _salesService) : ControllerBase
     {
 
-        [HttpGet("grouped-by-category")]
+        [HttpGet("group-by-category")]
         [AllowAnonymous]
         public IActionResult GetGroupedByCategory()
         {
-            var res = _salesService.GetGroupedDataByCategoryAndBrand();
-            return Ok(res);
+            var result = _salesService.GetGroupedDataByCategoryAndBrand();
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            return Ok(result.Data);
         }
 
         [HttpGet("top-sold-by-category")]
         [AllowAnonymous]
         public IActionResult GetTopSoldByCategory()
         {
-            var result = _salesService.TopSoldByCategory();
+            var result = _salesService.GetTopSoldProductsByCategory();
 
-            if (result == null) return BadRequest("Failed loading sales data from file.");
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpGet("group-by-sales-range")]
         [AllowAnonymous]
         public IActionResult GroupBySalesRange()
         {
-            var result = _salesService.GroupBySalesRange();
+            var result = _salesService.GetSalesGroupedByRange();
 
-            if (result == null) return BadRequest("Failed loading sales data from file.");
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return Ok(result);
+            return Ok(result.Data);
         }
     }
 }

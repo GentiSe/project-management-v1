@@ -21,7 +21,14 @@ namespace project_management_v1.Controllers
                 return Forbid("You're not allowed to authorize this resource.");
 
             var result = await repository.GetAllProjects(CurrentUserRoles);
-            return Ok(result);
+
+            if (!result.IsSuccess)
+            {
+                // Currently returning only a BadRequest, which might not be suitable for all cases.
+                // Could extend the Result class to include an ErrorCode and map it to an appropriate HTTP response code
+                return BadRequest(result.ErrorMessage);
+            }
+            return Ok(result.Data);
         }
 
         /// <summary>

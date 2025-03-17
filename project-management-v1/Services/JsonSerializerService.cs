@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace project_management_v1.Infrastructure.Services
+namespace project_management_v1.Services
 {
     public class JsonSerializerService : IJsonSerializerService
     {

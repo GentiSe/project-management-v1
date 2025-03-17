@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace project_management_v1.Infrastructure.Services
+namespace project_management_v1.Services
 {
     public interface IAuthenticationService
     {

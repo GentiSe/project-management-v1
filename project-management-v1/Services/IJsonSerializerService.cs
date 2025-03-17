@@ -1,4 +1,4 @@
-﻿namespace project_management_v1.Infrastructure.Services
+﻿namespace project_management_v1.Services
 {
     public interface IJsonSerializerService
     {

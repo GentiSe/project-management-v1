@@ -7,6 +7,7 @@ using project_management_v1.Application.Domain.Enums;
 using project_management_v1.Application.DTOs;
 using project_management_v1.Infrastructure.Data;
 using project_management_v1.Infrastructure.Helpers;
+using System.Threading.Tasks;
 
 namespace project_management_v1.Application.Repository
 {
@@ -57,57 +58,67 @@ namespace project_management_v1.Application.Repository
             return Result.Success();
         }
 
-        public async Task<List<ProjectDTo>> GetAllProjects(string[] currentUserRoles)
+        public async Task<Result<List<ProjectDTo>>> GetAllProjects(string[] currentUserRoles)
         {
-            var roleIds = await GetRoleIds(currentUserRoles);
+            try
+            {
+                var roleIds = await GetRoleIds(currentUserRoles);
 
-            // Using eager loading with `Include` for related `Children` and `Items`. 
-            // Perform the query directly to retrieve the projects with their related entities.
+                // Using eager loading with `Include` for related `Children` and `Items`. 
+                // Perform the query directly to retrieve the projects with their related entities.
 
-            // NOTE: This solution loads all the projects into memory at once, which may not be ideal for very large datasets. 
-            // In such cases, i would consider using pagination, filtering, or another strategy to handle large amounts of data efficiently.
-            var projects = await context.Projects
-                .AsNoTracking()
-                .Include(x => x.Items)
-                .Include(x => x.ProjectRoleAccesses)
-                .Include(x => x.Children.Where(c => !c.IsDeleted))
-                    .ThenInclude(x => x.Items.Where(c => !c.IsDeleted))
-                .Where(x => !x.IsDeleted
-                    && x.ProjectRoleAccesses.Any(pra => roleIds.Contains(pra.RoleId) 
-                    && pra.IsActive
-                    && (pra.AccesType == AccesType.Write || pra.AccesType == AccesType.Read)))
-                .Select(x => new ProjectDTo
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description =x.Description,
-                    CreatedAt = x.CreatedAt,
-                    ParentId = x.ParentId,
-                    Items = x.Items.Select(x => new ProjectItemDTo
+                // NOTE: This solution loads all the projects into memory at once, which may not be ideal for very large datasets. 
+                // In such cases, i would consider using pagination, filtering, or another strategy to handle large amounts of data efficiently.
+                var projects = await context.Projects
+                    .AsNoTracking()
+                    .Include(x => x.Items)
+                    .Include(x => x.ProjectRoleAccesses)
+                    .Include(x => x.Children.Where(c => !c.IsDeleted))
+                        .ThenInclude(x => x.Items.Where(c => !c.IsDeleted))
+                    .Where(x => !x.IsDeleted
+                        && x.ProjectRoleAccesses.Any(pra => roleIds.Contains(pra.RoleId)
+                        && pra.IsActive
+                        && (pra.AccesType == AccesType.Write || pra.AccesType == AccesType.Read)))
+                    .Select(x => new ProjectDTo
                     {
                         Id = x.Id,
-                        AssigneId = x.AssigneId,
-                        ReporterId = x.ReporterId,
-                        CreatedAt =x.CreatedAt,
-                        Order= x.Order,
-                        Priority = x.Priority,
-                        Text = x.Text,
-                        Time = x.Time,
-                        Title = x.Title,
-                        Url = x.Url,
-                    }).ToList(),
-                    Children = new List<ProjectDTo>()
-                })
-                .ToListAsync();
-            
-            if (!projects.Any())
-            {
-                return []; // just return an empty list.
-            }
-            var projectLookup =  projects.ToDictionary(x => x.Id);
+                        Name = x.Name,
+                        Description = x.Description,
+                        CreatedAt = x.CreatedAt,
+                        ParentId = x.ParentId,
+                        Items = x.Items.Select(x => new ProjectItemDTo
+                        {
+                            Id = x.Id,
+                            AssigneId = x.AssigneId,
+                            ReporterId = x.ReporterId,
+                            CreatedAt = x.CreatedAt,
+                            Order = x.Order,
+                            Priority = x.Priority.HasValue ? x.Priority.ToString(): null,
+                            Text = x.Text,
+                            Time = x.Time,
+                            Title = x.Title,
+                            Url = x.Url,
+                            Type = x.Type.ToString()
+                        }).ToList(),
+                        Children = new List<ProjectDTo>()
+                    })
+                    .ToListAsync();
 
-            var finalResult = BuildProjectHierarchyFromList(projectLookup, projects);
-            return finalResult;
+                if (projects.Count == 0)
+                {
+                    return Result<List<ProjectDTo>>.Failure("Projects not found.");
+                }
+
+                var projectLookup = projects.ToDictionary(x => x.Id);
+
+                var finalResult = BuildProjectHierarchyFromList(projectLookup, projects);
+                return Result<List<ProjectDTo>>.Success(finalResult);
+            }
+            catch (Exception e)
+            {
+                // we cann add loggin here...
+                return Result<List<ProjectDTo>>.Failure($"Failed fetching projects: {e.Message}");
+            }
         }
 
         private async Task<List<string>> GetRoleIds(string[] currentUserRoles)

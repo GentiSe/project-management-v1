@@ -6,6 +6,8 @@ namespace project_management_v1.Application.DTOs
     public class ProjectItemDTo
     {
         public long Id { get; set; }
+        public required string Type { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Title { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -22,7 +24,7 @@ namespace project_management_v1.Application.DTOs
         public long? Time { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
-        public ProjectItemPriority? Priority { get; set; }
+        public string? Priority { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
         public string? Text { get; set; }

@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace project_management_v1.Infrastructure.Services
+namespace project_management_v1.Services
 {
-    public class AuthenticationService(UserManager<IdentityUser> userManager, IConfiguration configuration) 
+    public class AuthenticationService(UserManager<IdentityUser> userManager, IConfiguration configuration)
         : IAuthenticationService
     {
         public async Task<string> GenerateJwtToken(IdentityUser user)
@@ -25,7 +25,7 @@ namespace project_management_v1.Infrastructure.Services
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            foreach(var role in roles)
+            foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }

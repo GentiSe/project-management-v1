@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using project_management_v1.Application.Requests;
-using project_management_v1.Infrastructure.Services;
+using project_management_v1.Services;
 
 namespace project_management_v1.Controllers
 {

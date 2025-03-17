@@ -1,6 +1,6 @@
 ﻿using project_management_v1.Application.Repository;
 using project_management_v1.Infrastructure.Data;
-using project_management_v1.Infrastructure.Services;
+using project_management_v1.Services;
 
 namespace project_management_v1.Infrastructure.ServiceCollectionExtensions
 {
